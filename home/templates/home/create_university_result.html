@@ -1,0 +1,93 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Create University Result{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header text-center">
+                <h3>Create University Result Sheet</h3>
+            </div>
+            <div class="card-body">
+                <form action="{% url 'create_university_result' %}" method="post" id="result-form">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="student_name" class="form-label">Student Name:</label>
+                        <input type="text" class="form-control" id="student_name" name="student_name" required>
+                    </div>
+                    <hr>
+                    <h4>Subjects</h4>
+                    <div id="subjects-container">
+                        <div class="row mb-3 subject-entry">
+                            <div class="col">
+                                <input type="text" class="form-control" name="subject_name_1" placeholder="Subject Name" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" step="0.01" min="0" max="100" class="form-control" name="mark_1" placeholder="Mark" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="number" step="1" min="0" class="form-control" name="credits_1" placeholder="Credits" required>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" name="semester_1" placeholder="Semester (Optional)">
+                            </div>
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-danger remove-subject-btn">&times;</button>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-secondary mt-3" id="add-subject-btn">Add Subject</button>
+                    <hr>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">Generate Result</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        let subjectIndex = 1;
+        const subjectsContainer = document.getElementById('subjects-container');
+        const addSubjectBtn = document.getElementById('add-subject-btn');
+
+        addSubjectBtn.addEventListener('click', function() {
+            subjectIndex++;
+            const newSubjectRow = document.createElement('div');
+            newSubjectRow.className = 'row mb-3 subject-entry';
+            newSubjectRow.innerHTML = `
+                <div class="col">
+                    <input type="text" class="form-control" name="subject_name_${subjectIndex}" placeholder="Subject Name" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" step="0.01" min="0" max="100" class="form-control" name="mark_${subjectIndex}" placeholder="Mark" required>
+                </div>
+                <div class="col-md-2">
+                    <input type="number" step="1" min="0" class="form-control" name="credits_${subjectIndex}" placeholder="Credits" required>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" class="form-control" name="semester_${subjectIndex}" placeholder="Semester (Optional)">
+                </div>
+                <div class="col-auto">
+                    <button type="button" class="btn btn-danger remove-subject-btn">&times;</button>
+                </div>
+            `;
+            subjectsContainer.appendChild(newSubjectRow);
+        });
+
+        subjectsContainer.addEventListener('click', function(e) {
+            if (e.target && e.target.classList.contains('remove-subject-btn')) {
+                const subjectEntries = document.querySelectorAll('.subject-entry');
+                if (subjectEntries.length > 1) {
+                    e.target.closest('.subject-entry').remove();
+                } else {
+                    alert('You must have at least one subject.');
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

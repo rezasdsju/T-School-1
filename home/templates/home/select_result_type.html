@@ -1,0 +1,18 @@
+{% extends 'home/base.html' %}
+
+{% block title %}Select Result Sheet Type{% endblock %}
+
+{% block content %}
+<div class="container custom-select-container">
+    <h1>Select Result Sheet Type</h1>
+    <div class="options-container">
+        <div class="option-box">
+            <a href="{% url 'create_school_result' %}">Result Sheet for School or College</a>
+        </div>
+        <div class="option-box">
+            <a href="{% url 'create_university_result' %}">Result Sheet for University</a>
+        </div>
+    </div>
+    <a href="{% url 'index' %}" class="back-link">Go back to Home</a>
+</div>
+{% endblock %}

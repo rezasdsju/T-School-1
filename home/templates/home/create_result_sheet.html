@@ -174,8 +174,10 @@
             for (let i = 0; i < numSubjects; i++) {
                 const newSubjectDiv = document.createElement('div');
                 newSubjectDiv.classList.add('subject-entry');
+                // Give the first subject input a special ID to be focused later
+                const subjectInputId = i === 0 ? 'first_subject_name' : '';
                 newSubjectDiv.innerHTML = `
-                    <input type="text" name="subject_name_${i}" placeholder="Subject Name ${i+1}" required>
+                    <input type="text" id="${subjectInputId}" name="subject_name_${i}" placeholder="Subject Name ${i+1}" required>
                     <input type="number" name="mark_${i}" step="0.01" placeholder="Mark" required>
                     <input type="number" name="credits_${i}" placeholder="Credits" required>
                     <input type="text" name="semester_${i}" placeholder="Semester">
@@ -185,14 +187,19 @@
             
             document.getElementById('initial_input').style.display = 'none';
             document.getElementById('dynamic_form').style.display = 'block';
+
+            // Find the first subject input and set the focus
+            const firstSubjectInput = document.getElementById('first_subject_name');
+            if (firstSubjectInput) {
+                firstSubjectInput.focus();
+            }
         });
 
         // Add event listener for Enter key on the number of subjects input
         document.getElementById('num_subjects').addEventListener('keypress', function(event) {
-            // Check if the key pressed is 'Enter'
             if (event.key === 'Enter') {
-                event.preventDefault(); // Prevents the form from submitting
-                document.getElementById('get_subject_inputs').click(); // Clicks the "Go" button
+                event.preventDefault();
+                document.getElementById('get_subject_inputs').click();
             }
         });
     </script>

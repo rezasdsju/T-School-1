@@ -1,138 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Welcome to TSchool</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #87CEFA, #e0f7fa);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+{% extends 'home/base.html' %}
 
-        .welcome-container {
-            background-color: rgba(255, 255, 255, 0.92);
-            border-radius: 20px;
-            padding: 40px 60px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            text-align: center;
-            margin-top: 80px;
-            animation: fadeIn 1s ease-in-out;
-        }
+{% block title %}Welcome to TSchool{% endblock %}
 
-        .welcome-container h1 {
-            font-size: 48px;
-            color: #0d47a1;
-            margin: 0 0 20px;
-            text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
-        }
+{% block content %}
+<div class="welcome-container">
+    <h1>Welcome to TSchool</h1>
+    <p>Your Digital Academic Result Manager</p>
+</div>
 
-        .welcome-container p {
-            font-size: 20px;
-            color: #333;
-            margin: 0;
-        }
-
-        .features {
-            margin-top: 40px;
-            padding: 20px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 15px;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-        }
-
-        .features ul {
-            list-style-type: none;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .options-container {
-            display: flex;
-            gap: 20px;
-            margin-top: 40px;
-            padding: 20px;
-        }
-
-        .option-box {
-            background-color: #fff;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-align: center;
-            cursor: pointer;
-            width: 250px;
-        }
-
-        .option-box:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .option-box a {
-            text-decoration: none;
-            color: #0d47a1;
-            font-size: 18px;
-            font-weight: 600;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        @media (max-width: 768px) {
-            .welcome-container {
-                padding: 25px;
-            }
-
-            .welcome-container h1 {
-                font-size: 34px;
-            }
-            
-            .options-container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .option-box {
-                width: 90%;
-            }
-        }
-    </style>
-</head>
-<body>
-    <div class="welcome-container">
-        <h1>Welcome to TSchool</h1>
-        <p>Your Digital Academic Result Manager</p>
+<div class="options-container">
+    <div class="option-box">
+        <a href="{% url 'select_result_type' %}">Create Student Result Sheet</a>
     </div>
-    
-    <div class="options-container">
-        <div class="option-box">
-            <a href="{% url 'create_result_sheet' %}">Create Student Result Sheet</a>
-        </div>
-        <div class="option-box">
-            <a href="#">Read Pdf Books</a>
-        </div>
-        <div class="option-box">
-            <a href="#">Find Tutorials</a>
-        </div>
-        <div class="option-box">
-            <a href="{% url 'show_result' %}">View Sample Result</a>
-        </div>
+    <div class="option-box">
+        <a href="{% url 'show_school_results' %}">View All School Results</a>
     </div>
-</body>
-</html>
+    <div class="option-box">
+        <a href="{% url 'show_university_results' %}">View All University Results</a>
+    </div>
+</div>
+{% endblock %}
