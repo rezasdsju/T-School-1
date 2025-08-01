@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Student Result Sheet</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #87CEFA, #e0f7fa);
+            padding: 20px;
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            transition: all 0.3s ease;
+        }
+        h1 {
+            text-align: center;
+            color: #0d47a1;
+            margin-bottom: 25px;
+            font-size: 2.5rem;
+            border-bottom: 2px solid #0d47a1;
+            padding-bottom: 10px;
+        }
+        h2 {
+            text-align: left;
+            color: #2c3e50;
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+            font-size: 1.1rem;
+        }
+        input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        input[type="text"]:focus, input[type="number"]:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.5);
+            outline: none;
+        }
+        .subject-entry-container {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        .subject-entry {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .subject-entry input {
+            width: auto;
+        }
+        .action-buttons button, .add-btn, .submit-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            color: white;
+        }
+        .add-btn {
+            background-color: #2ecc71;
+            margin-bottom: 15px;
+        }
+        .add-btn:hover {
+            background-color: #27ae60;
+            transform: translateY(-2px);
+        }
+        .submit-btn {
+            background-color: #3498db;
+            margin-top: 20px;
+        }
+        .submit-btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+        #get_subject_inputs {
+            background-color: #f39c12;
+            margin-top: 10px;
+        }
+        #get_subject_inputs:hover {
+            background-color: #e67e22;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Student Result Sheet</h1>
+        <form action="{% url 'create_result_sheet' %}" method="post" id="main-form">
+            {% csrf_token %}
+            
+            <div id="initial_input">
+                <div class="form-group">
+                    <label for="student_name">Student Name:</label>
+                    <input type="text" id="student_name" name="student_name" required>
+                </div>
+                <div class="form-group">
+                    <label for="num_subjects">Number of Subjects:</label>
+                    <input type="number" id="num_subjects" name="num_subjects" min="1" required>
+                </div>
+                <button type="button" id="get_subject_inputs">Go</button>
+            </div>
+            
+            <div id="dynamic_form" style="display: none;">
+                <hr>
+                <h2>Subject Details</h2>
+                <div id="subjects_container" class="subject-entry-container">
+                </div>
+                <button type="submit" class="submit-btn" id="submitBtn">Submit Result</button>
+            </div>
+        </form>
+        <a href="{% url 'index' %}" class="back-link">Go back to Home</a>
+    </div>
+
+    <script>
+        document.getElementById('get_subject_inputs').addEventListener('click', function() {
+            const numSubjects = document.getElementById('num_subjects').value;
+            const studentName = document.getElementById('student_name').value;
+            const container = document.getElementById('subjects_container');
+            
+            if (studentName.trim() === "" || numSubjects < 1) {
+                alert("Please enter a valid student name and number of subjects.");
+                return;
+            }
+
+            container.innerHTML = '';
+            
+            for (let i = 0; i < numSubjects; i++) {
+                const newSubjectDiv = document.createElement('div');
+                newSubjectDiv.classList.add('subject-entry');
+                newSubjectDiv.innerHTML = `
+                    <input type="text" name="subject_name_${i}" placeholder="Subject Name ${i+1}" required>
+                    <input type="number" name="mark_${i}" step="0.01" placeholder="Mark" required>
+                    <input type="number" name="credits_${i}" placeholder="Credits" required>
+                    <input type="text" name="semester_${i}" placeholder="Semester">
+                `;
+                container.appendChild(newSubjectDiv);
+            }
+            
+            document.getElementById('initial_input').style.display = 'none';
+            document.getElementById('dynamic_form').style.display = 'block';
+        });
+
+        // Add event listener for Enter key on the number of subjects input
+        document.getElementById('num_subjects').addEventListener('keypress', function(event) {
+            // Check if the key pressed is 'Enter'
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevents the form from submitting
+                document.getElementById('get_subject_inputs').click(); // Clicks the "Go" button
+            }
+        });
+    </script>
+</body>
+</html>

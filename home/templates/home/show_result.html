@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Results</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #87CEFA, #e0f7fa);
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+        }
+        h1 {
+            text-align: center;
+            color: #0d47a1;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+            border-bottom: 2px solid #0d47a1;
+            padding-bottom: 10px;
+        }
+        .student-card {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .student-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+        }
+        .student-card h2 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .student-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 10px;
+        }
+        .student-info p {
+            margin: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .no-results {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #7f8c8d;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+            width: 100%;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .download-buttons {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .download-buttons a {
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: white;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .download-buttons .pdf-btn {
+            background-color: #e74c3c;
+        }
+        .download-buttons .pdf-btn:hover {
+            background-color: #c0392b;
+        }
+        .download-buttons .excel-btn {
+            background-color: #27ae60;
+        }
+        .download-buttons .excel-btn:hover {
+            background-color: #229954;
+        }
+        .new-student-btn {
+            background-color: #0d47a1;
+        }
+        .new-student-btn:hover {
+            background-color: #0c3e80;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Student Results</h1>
+        <a href="{% url 'index' %}" class="back-link">Go back to Home</a>
+        
+        <div style="float: right;">
+            <form method="POST" action="{% url 'clear_all_data' %}" onsubmit="return confirm('Are you sure you want to delete all student data? This action cannot be undone.');" style="display: inline-block;">
+                {% csrf_token %}
+                <button type="submit" style="background-color: #e74c3c; color: white; padding: 10px 15px; border: none; border-radius: 5px; cursor: pointer;">Clear All Data</button>
+            </form>
+            <a href="{% url 'export_all_pdf' %}" class="pdf-btn" style="margin-left: 10px; display: inline-block;">Download All as PDF</a>
+            <a href="{% url 'export_all_excel' %}" class="excel-btn" style="margin-left: 10px; display: inline-block;">Download All as Excel</a>
+        </div>
+        
+        <div style="clear:both; margin-bottom: 20px;"></div>
+        
+        {% if students %}
+            {% for student in students %}
+                <div class="student-card">
+                    <div class="student-info">
+                        <p><strong>Student Name:</strong> {{ student.name }}</p>
+                        <p><strong>Overall GPA:</strong> {{ student.cumulative_gpa|floatformat:2 }}</p>
+                        <p><strong>Number of Subjects:</strong> {{ student.num_subjects }}</p>
+                        <p><strong>Entry Date:</strong> {{ student.entry_date|date:"F d, Y" }}</p>
+                    </div>
+
+                    <h3>Subject Details:</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Mark</th>
+                                <th>Credits</th>
+                                <th>Semester</th>
+                                <th>Grade</th>
+                                <th>Subject GPA</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for subject in student.subjects.all %}
+                                <tr>
+                                    <td>{{ subject.name }}</td>
+                                    <td>{{ subject.mark|floatformat:2 }}</td>
+                                    <td>{{ subject.credits }}</td>
+                                    <td>{{ subject.semester }}</td>
+                                    <td>{{ subject.grade }}</td>
+                                    <td>{{ subject.subject_gpa|floatformat:2 }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <div class="download-buttons">
+                        <a href="{% url 'export_pdf' student.id %}" class="pdf-btn">Download PDF</a>
+                        <a href="{% url 'export_excel' student.id %}" class="excel-btn">Download Excel (CSV)</a>
+                    </div>
+
+                    <a href="{% url 'create_result_sheet' %}" class="new-student-btn" style="display: inline-block; padding: 10px 15px; border-radius: 5px; text-decoration: none; color: white; font-weight: bold; transition: background-color 0.3s ease; margin-top: 10px;">Create for new student</a>
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="no-results">No results found. Please <a href="{% url 'create_result_sheet' %}">create a new one</a>.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
